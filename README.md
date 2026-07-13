@@ -1,7 +1,7 @@
 # DataPrepToolkit
 
 <p align="center">
-  <img src="https://img.shields.io/github/actions/workflow/status/yourusername/DataPrepToolkit/ci.yml?branch=main" alt="Build Status">
+  <img src="https://img.shields.io/github/actions/workflow/status/Arasoul/DataPrepToolkit/ci.yml?branch=main" alt="Build Status">
   <img src="https://img.shields.io/badge/python-3.11+-blue.svg" alt="Python 3.11+">
   <img src="https://img.shields.io/badge/tests-166%20passing-brightgreen.svg" alt="Tests">
   <img src="https://img.shields.io/badge/coverage-91%25-brightgreen.svg" alt="Coverage">
@@ -54,7 +54,7 @@ pip install datapreptoolkit
 For development:
 
 ```bash
-git clone https://github.com/yourusername/DataPrepToolkit.git
+git clone https://github.com/Arasoul/DataPrepToolkit.git
 cd DataPrepToolkit
 pip install -e ".[dev]"
 ```
@@ -392,4 +392,4 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ## Author
 
-**Ahmed** - [GitHub](https://github.com/yourusername)
+**Ahmed** - [GitHub](https://github.com/Arasoul)
