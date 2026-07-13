@@ -216,7 +216,8 @@ def optimise_datatypes(
                 result.messages.append(
                     f"Column '{col}': {db} -> {da}"
                 )
-        elif pd.api.types.is_object_dtype(series):
+        elif pd.api.types.is_object_dtype(series) \
+                or isinstance(series.dtype, pd.StringDtype):
             new_series = _optimise_object_to_category(series, category_threshold)
             if str(new_series.dtype) != dtype_before:
                 cleaned[col] = new_series

@@ -322,7 +322,7 @@ def profile_dataset(
         elif pd.api.types.is_datetime64_any_dtype(series):
             datetime_cols.append(col)
         elif pd.api.types.is_object_dtype(series) or isinstance(
-            series.dtype, pd.CategoricalDtype
+            series.dtype, (pd.CategoricalDtype, pd.StringDtype)
         ):
             categorical_cols.append(col)
         else:

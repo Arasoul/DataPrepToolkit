@@ -162,7 +162,7 @@ def identify_column_types(df: pd.DataFrame) -> dict[str, list[str]]:
         elif pd.api.types.is_datetime64_any_dtype(dtype):
             result["datetime"].append(col)
         elif pd.api.types.is_object_dtype(dtype) or isinstance(
-            dtype, pd.CategoricalDtype
+            dtype, (pd.CategoricalDtype, pd.StringDtype)
         ):
             result["categorical"].append(col)
         else:
@@ -185,7 +185,9 @@ def find_datetime_columns(
         A list of column names that were successfully parsed as datetimes.
     """
     search = candidates or [
-        c for c in df.columns if pd.api.types.is_object_dtype(df[c])
+        c for c in df.columns
+        if pd.api.types.is_object_dtype(df[c])
+        or isinstance(df[c].dtype, pd.StringDtype)
     ]
     parsed: list[str] = []
     for col in search:

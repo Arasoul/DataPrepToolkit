@@ -86,9 +86,11 @@ class TestGenerateEncodingRecommendations:
         """Should only recommend for categorical columns."""
         recs = generate_encoding_recommendations(sample_df)
         for rec in recs:
+            dt = sample_df[rec.column].dtype
             assert (
-                sample_df[rec.column].dtype == object
-                or sample_df[rec.column].dtype.name == "category"
+                pd.api.types.is_object_dtype(dt)
+                or pd.api.types.is_string_dtype(dt)
+                or isinstance(dt, pd.CategoricalDtype)
             )
 
     def test_encoding_strategies(self, sample_df: pd.DataFrame) -> None:

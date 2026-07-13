@@ -129,7 +129,9 @@ def generate_encoding_recommendations(
         A list of :class:`EncodingRecommendation` objects.
     """
     cfg = config or ToolkitConfig()
-    cat_cols = df.select_dtypes(include=["object", "category"]).columns
+    cat_cols = df.select_dtypes(
+        include=["object", "category", "string"]
+    ).columns
     recs: list[EncodingRecommendation] = []
 
     for col in cat_cols:

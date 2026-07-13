@@ -71,7 +71,8 @@ class TestIdentifyColumnTypes:
     def test_identifies_categorical(self, sample_df: pd.DataFrame) -> None:
         """Should identify categorical columns."""
         result = identify_column_types(sample_df)
-        assert "department" in result["categorical"] or "name" in result["categorical"]
+        cat_types = set(result["categorical"])
+        assert "department" in cat_types or "name" in cat_types
 
     def test_identifies_datetime(self) -> None:
         """Should identify datetime columns (only if dtype is datetime64)."""

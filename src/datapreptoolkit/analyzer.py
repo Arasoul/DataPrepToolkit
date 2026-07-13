@@ -383,7 +383,9 @@ def analyze_categorical_columns(
         A :class:`CategoricalAnalysis` with per-column statistics.
     """
     cfg = config or ToolkitConfig()
-    cat_cols = df.select_dtypes(include=["object", "category"]).columns.tolist()
+    cat_cols = df.select_dtypes(
+        include=["object", "category", "string"]
+    ).columns.tolist()
 
     col_stats: dict[str, CategoricalColumnStats] = {}
     high_card: list[str] = []
@@ -468,7 +470,7 @@ def generate_feature_summaries(
         elif pd.api.types.is_datetime64_any_dtype(series):
             sem = "datetime"
         elif pd.api.types.is_object_dtype(series) \
-                or isinstance(series.dtype, pd.CategoricalDtype):
+                or isinstance(series.dtype, (pd.CategoricalDtype, pd.StringDtype)):
             sem = "categorical"
         else:
             sem = "other"
