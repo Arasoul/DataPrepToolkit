@@ -4,7 +4,7 @@
   <img src="https://img.shields.io/github/actions/workflow/status/yourusername/DataPrepToolkit/ci.yml?branch=main" alt="Build Status">
   <img src="https://img.shields.io/badge/python-3.11+-blue.svg" alt="Python 3.11+">
   <img src="https://img.shields.io/badge/tests-166%20passing-brightgreen.svg" alt="Tests">
-  <img src="https://img.shields.io/badge/coverage-98%25-brightgreen.svg" alt="Coverage">
+  <img src="https://img.shields.io/badge/coverage-91%25-brightgreen.svg" alt="Coverage">
   <img src="https://img.shields.io/badge/mypy-passing-blue.svg" alt="Mypy">
   <img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License: MIT">
   <img src="https://img.shields.io/badge/version-0.1.0-orange.svg" alt="Version">
@@ -310,13 +310,17 @@ DataPrepToolkit/
 
 ## Screenshots
 
-### HTML Quality Report
+### Dataset Overview & Missing Values
 
-![Quality Report](screenshots/html_report.png)
+![Dataset Overview](screenshots/report_1.png)
 
-### CSV Summary Preview
+### Numeric & Categorical Analysis
 
-![CSV Summary](screenshots/csv_summary.png)
+![Numeric and Categorical](screenshots/report_2.png)
+
+### Encoding, Outliers & Recommendations
+
+![Encoding and Recommendations](screenshots/report_3.png)
 
 ## API Reference
 
