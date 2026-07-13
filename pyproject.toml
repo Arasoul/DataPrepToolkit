@@ -44,6 +44,7 @@ dev = [
     "pytest-cov>=4.1.0",
     "mypy>=1.0.0",
     "ruff>=0.1.0",
+    "pandas-stubs>=2.1.0",
 ]
 
 [tool.setuptools.packages.find]
