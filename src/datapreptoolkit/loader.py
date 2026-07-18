@@ -41,6 +41,7 @@ logger = logging.getLogger("datapreptoolkit")
 # Dataclass: ColumnProfile
 # ---------------------------------------------------------------------------
 
+
 @dataclass(frozen=True)
 class ColumnProfile:
     """Profile for a single column.
@@ -75,6 +76,7 @@ class ColumnProfile:
 # ---------------------------------------------------------------------------
 # Dataclass: DatasetProfile
 # ---------------------------------------------------------------------------
+
 
 @dataclass
 class DatasetProfile:
@@ -128,6 +130,7 @@ class DatasetProfile:
 # Public API: Loading
 # ---------------------------------------------------------------------------
 
+
 def load_csv(
     filepath: str | Path,
     encoding: str = "utf-8",
@@ -150,7 +153,7 @@ def load_csv(
         A ``pandas.DataFrame`` containing the loaded data.
 
     Raises:
-        FileNotFoundError: If *filepath* does not exist.
+        LoadError: If *filepath* does not exist.
         FileFormatError: If *filepath* is not a ``.csv`` file.
         LoadError: If reading fails for any other reason.
         EmptyDatasetError: If the file contains zero rows.
@@ -159,7 +162,7 @@ def load_csv(
 
     # -- Existence check --
     if not path.exists():
-        raise FileNotFoundError(f"File not found: {path}")
+        raise LoadError(f"File not found: {path}", source=path)
 
     # -- Extension check --
     if path.suffix.lower() != ".csv":
@@ -213,9 +216,7 @@ def load_dataframe(
         EmptyDatasetError: If *df* has zero rows or zero columns.
     """
     if not isinstance(df, pd.DataFrame):
-        raise TypeError(
-            f"Expected a pandas DataFrame, got {type(df).__name__}"
-        )
+        raise TypeError(f"Expected a pandas DataFrame, got {type(df).__name__}")
 
     if df.empty or df.shape[1] == 0:
         raise EmptyDatasetError()
@@ -227,6 +228,7 @@ def load_dataframe(
 # ---------------------------------------------------------------------------
 # Public API: Profiling
 # ---------------------------------------------------------------------------
+
 
 def profile_dataset(
     df: pd.DataFrame,
@@ -276,13 +278,8 @@ def profile_dataset(
         null_pct = (null_count / n_rows * 100) if n_rows > 0 else 0.0
 
         is_constant = unique_ratio <= (1.0 - cfg.constant_threshold)
-        is_high_card = (
-            unique_ratio >= cfg.high_cardinality_threshold
-            and unique > 1
-        )
-        is_potential_id = (
-            unique_ratio >= cfg.id_column_threshold and unique > 1
-        )
+        is_high_card = unique_ratio >= cfg.high_cardinality_threshold and unique > 1
+        is_potential_id = unique_ratio >= cfg.id_column_threshold and unique > 1
 
         if null_count > 0:
             missing_cols.append(col)
@@ -295,9 +292,7 @@ def profile_dataset(
 
         # Semantic classification
         dtype_str = str(series.dtype)
-        sample = tuple(
-            v for v in series.dropna().head(5).tolist()
-        )
+        sample = tuple(v for v in series.dropna().head(5).tolist())
 
         cp = ColumnProfile(
             name=col,
@@ -330,8 +325,14 @@ def profile_dataset(
 
     # -- Potential leakage columns (heuristic: name-based) --
     leakage_keywords = {
-        "date_sale", "sale_date", "signup_date", "order_approved",
-        "delivered", "delivery_date", "review_date", "answer_timestamp",
+        "date_sale",
+        "sale_date",
+        "signup_date",
+        "order_approved",
+        "delivered",
+        "delivery_date",
+        "review_date",
+        "answer_timestamp",
     }
     potential_leakage_cols: list[str] = []
     for col in df.columns:

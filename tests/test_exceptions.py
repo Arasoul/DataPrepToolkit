@@ -99,10 +99,10 @@ class TestInvalidColumnError:
     def test_suggestion(self) -> None:
         """Should suggest similar column names."""
         error = InvalidColumnError("age", available=["age_group", "salary"])
-        assert (
-            "Did you mean" in str(error)
-            or error.available == ["age_group", "salary"]
-        )
+        assert "Did you mean" in str(error) or error.available == [
+            "age_group",
+            "salary",
+        ]
 
     def test_is_cleaning_error(self) -> None:
         """Should be a CleaningError subclass."""

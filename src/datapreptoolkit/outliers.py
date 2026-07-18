@@ -29,6 +29,7 @@ logger = logging.getLogger("datapreptoolkit")
 # Dataclasses
 # ---------------------------------------------------------------------------
 
+
 @dataclass(frozen=True)
 class ColumnOutlierInfo:
     """Outlier statistics for a single numeric column.
@@ -81,6 +82,7 @@ class OutlierDetection:
 # ---------------------------------------------------------------------------
 # IQR detection
 # ---------------------------------------------------------------------------
+
 
 def detect_outliers_iqr(
     df: pd.DataFrame,
@@ -168,6 +170,7 @@ def detect_outliers_iqr(
 # ---------------------------------------------------------------------------
 # Z-score detection
 # ---------------------------------------------------------------------------
+
 
 def detect_outliers_zscore(
     df: pd.DataFrame,
@@ -287,6 +290,7 @@ def detect_outliers_zscore(
 # Dispatcher
 # ---------------------------------------------------------------------------
 
+
 def detect_outliers(
     df: pd.DataFrame,
     method: str | None = None,
@@ -314,6 +318,4 @@ def detect_outliers(
     elif m == "zscore":
         return detect_outliers_zscore(df, config=cfg)
     else:
-        raise ValueError(
-            f"Unknown outlier method '{m}'. Choose 'iqr' or 'zscore'."
-        )
+        raise ValueError(f"Unknown outlier method '{m}'. Choose 'iqr' or 'zscore'.")

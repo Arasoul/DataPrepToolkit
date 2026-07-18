@@ -6,6 +6,7 @@ every configurable behaviour in the toolkit.
 
 from __future__ import annotations
 
+import types
 from dataclasses import dataclass, field
 from enum import StrEnum
 from pathlib import Path
@@ -47,7 +48,7 @@ class ToolkitConfig:
                          lets pandas infer the format.
         datetime_columns: Explicit list of columns to parse as datetimes.
                           ``None`` = attempt all object columns.
-        optimize_memory: Down-cast numeric types to save memory.
+        optimise_memory: Down-cast numeric types to save memory.
         detect_outliers: Run outlier detection during profiling.
         outlier_method: ``"iqr"`` or ``"zscore"``.
         iqr_multiplier: IQR multiplier for the IQR method (default 1.5).
@@ -79,7 +80,7 @@ class ToolkitConfig:
     datetime_columns: list[str] | None = None
 
     # -- Memory optimisation --
-    optimize_memory: bool = True
+    optimise_memory: bool = True
 
     # -- Outlier detection --
     detect_outliers: bool = True
@@ -101,13 +102,15 @@ class ToolkitConfig:
     id_column_threshold: float = 0.95
 
     # -- Quality scoring weights --
-    quality_weights: dict[str, float] = field(default_factory=lambda: {
-        "missing": 40.0,
-        "duplicate": 20.0,
-        "constant": 2.0,
-        "high_cardinality": 1.0,
-        "outlier": 3.0,
-    })
+    quality_weights: dict[str, float] = field(
+        default_factory=lambda: {
+            "missing": 40.0,
+            "duplicate": 20.0,
+            "constant": 2.0,
+            "high_cardinality": 1.0,
+            "outlier": 3.0,
+        }
+    )
 
     # -- Logging --
     log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "INFO"
@@ -151,3 +154,9 @@ class ToolkitConfig:
                 f"quality_weights must have keys {valid_keys}, "
                 f"got {set(self.quality_weights.keys())}"
             )
+        # Wrap in MappingProxyType for true immutability
+        object.__setattr__(
+            self,
+            "quality_weights",
+            types.MappingProxyType(self.quality_weights),
+        )

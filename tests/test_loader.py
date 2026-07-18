@@ -34,8 +34,8 @@ class TestLoadCSV:
         assert len(df) == 3
 
     def test_load_csv_nonexistent_file(self) -> None:
-        """Should raise FileNotFoundError for nonexistent file."""
-        with pytest.raises(FileNotFoundError):
+        """Should raise LoadError for nonexistent file."""
+        with pytest.raises(LoadError):
             load_csv("nonexistent.csv")
 
     def test_load_csv_wrong_format(self, tmp_path: Path) -> None:

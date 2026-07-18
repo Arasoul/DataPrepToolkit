@@ -50,8 +50,10 @@ class TestRangeValidation:
         """Should pass when values are within range."""
         rules = [
             ValidationRule(
-                column="age", rule_type="range",
-                min_value=0, max_value=150,
+                column="age",
+                rule_type="range",
+                min_value=0,
+                max_value=150,
             ),
         ]
         result = validate_dataset(sample_df, rules)
@@ -62,8 +64,10 @@ class TestRangeValidation:
         df = pd.DataFrame({"age": [10, 20, 200, 30]})
         rules = [
             ValidationRule(
-                column="age", rule_type="range",
-                min_value=0, max_value=150,
+                column="age",
+                rule_type="range",
+                min_value=0,
+                max_value=150,
             ),
         ]
         result = validate_dataset(df, rules)
@@ -75,8 +79,10 @@ class TestRangeValidation:
         df = pd.DataFrame({"age": [10.0, 20.0, np.nan, 30.0]})
         rules = [
             ValidationRule(
-                column="age", rule_type="range",
-                min_value=0, max_value=150,
+                column="age",
+                rule_type="range",
+                min_value=0,
+                max_value=150,
             ),
         ]
         result = validate_dataset(df, rules)
@@ -91,7 +97,8 @@ class TestRegexValidation:
         df = pd.DataFrame({"email": ["test@example.com", "user@domain.org"]})
         rules = [
             ValidationRule(
-                column="email", rule_type="regex",
+                column="email",
+                rule_type="regex",
                 pattern=r"^[\w.-]+@[\w.-]+\.\w+$",
             ),
         ]
@@ -103,7 +110,8 @@ class TestRegexValidation:
         df = pd.DataFrame({"email": ["test@example.com", "invalid-email"]})
         rules = [
             ValidationRule(
-                column="email", rule_type="regex",
+                column="email",
+                rule_type="regex",
                 pattern=r"^[\w.-]+@[\w.-]+\.\w+$",
             ),
         ]
@@ -168,7 +176,8 @@ class TestInSetValidation:
         df = pd.DataFrame({"status": ["active", "inactive", "active"]})
         rules = [
             ValidationRule(
-                column="status", rule_type="in_set",
+                column="status",
+                rule_type="in_set",
                 allowed_values={"active", "inactive"},
             ),
         ]
@@ -180,7 +189,8 @@ class TestInSetValidation:
         df = pd.DataFrame({"status": ["active", "pending", "active"]})
         rules = [
             ValidationRule(
-                column="status", rule_type="in_set",
+                column="status",
+                rule_type="in_set",
                 allowed_values={"active", "inactive"},
             ),
         ]

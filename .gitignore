@@ -24,7 +24,12 @@ ENV/
 .pytest_cache/
 .coverage
 htmlcov/
+
+# Type checking
 .mypy_cache/
+
+# Linting
+.ruff_cache/
 
 # OS
 .DS_Store
@@ -38,10 +43,6 @@ reports/figures/
 
 # Jupyter
 .ipynb_checkpoints/
-
-# Coverage
-.coverage
-htmlcov/
 
 # Temp scripts
 generate_report.py

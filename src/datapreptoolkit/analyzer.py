@@ -33,6 +33,7 @@ logger = logging.getLogger("datapreptoolkit")
 # Dataclasses
 # ---------------------------------------------------------------------------
 
+
 @dataclass(frozen=True)
 class ColumnMissingInfo:
     """Missing-value statistics for a single column.
@@ -198,6 +199,7 @@ class FeatureSummary:
 # Public API: Missing Value Analysis
 # ---------------------------------------------------------------------------
 
+
 def analyze_missing_values(
     df: pd.DataFrame,
     config: ToolkitConfig | None = None,
@@ -252,8 +254,7 @@ def analyze_missing_values(
         total_cells=total_cells,
         total_missing=total_missing,
         overall_missing_pct=(
-            round(total_missing / total_cells * 100, 2)
-            if total_cells else 0.0
+            round(total_missing / total_cells * 100, 2) if total_cells else 0.0
         ),
         columns=col_infos,
         completely_empty_columns=empty_cols,
@@ -273,6 +274,7 @@ def analyze_missing_values(
 # ---------------------------------------------------------------------------
 # Public API: Numeric Analysis
 # ---------------------------------------------------------------------------
+
 
 def analyze_numeric_columns(
     df: pd.DataFrame,
@@ -366,6 +368,7 @@ def analyze_numeric_columns(
 # Public API: Categorical Analysis
 # ---------------------------------------------------------------------------
 
+
 def analyze_categorical_columns(
     df: pd.DataFrame,
     config: ToolkitConfig | None = None,
@@ -396,10 +399,7 @@ def analyze_categorical_columns(
         unique = int(s.nunique())
         mode_val = s.mode().iloc[0] if not s.mode().empty else None
         mode_freq = int(s.value_counts().iloc[0]) if not s.value_counts().empty else 0
-        top = tuple(
-            (val, int(cnt))
-            for val, cnt in s.value_counts().head(10).items()
-        )
+        top = tuple((val, int(cnt)) for val, cnt in s.value_counts().head(10).items())
         ratio = unique / count if count else 0.0
 
         cs = CategoricalColumnStats(
@@ -432,6 +432,7 @@ def analyze_categorical_columns(
 # ---------------------------------------------------------------------------
 # Public API: Feature Summaries
 # ---------------------------------------------------------------------------
+
 
 def generate_feature_summaries(
     df: pd.DataFrame,
@@ -469,8 +470,9 @@ def generate_feature_summaries(
             sem = "numeric"
         elif pd.api.types.is_datetime64_any_dtype(series):
             sem = "datetime"
-        elif pd.api.types.is_object_dtype(series) \
-                or isinstance(series.dtype, (pd.CategoricalDtype, pd.StringDtype)):
+        elif pd.api.types.is_object_dtype(series) or isinstance(
+            series.dtype, (pd.CategoricalDtype, pd.StringDtype)
+        ):
             sem = "categorical"
         else:
             sem = "other"
@@ -501,7 +503,7 @@ def generate_feature_summaries(
                 "min": str(s_data.min()),
                 "max": str(s_data.max()),
             }
-        elif sem == "bool":
+        elif sem == "boolean" and not s_data.empty:
             detail = {
                 "true_count": int(s_data.sum()) if s_data.dtype != object else 0,
                 "false_count": int((~s_data).sum()) if s_data.dtype != object else 0,

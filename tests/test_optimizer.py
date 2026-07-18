@@ -91,13 +91,13 @@ class TestOptimiseMemory:
 
     def test_disabled_config(self, sample_df: pd.DataFrame) -> None:
         """Should return original when optimization disabled."""
-        config = ToolkitConfig(optimize_memory=False)
+        config = ToolkitConfig(optimise_memory=False)
         result_df, result = optimise_memory(sample_df, config=config)
         assert result_df.equals(sample_df)
         assert "disabled" in result.messages[0].lower()
 
     def test_enabled_config(self, sample_df: pd.DataFrame) -> None:
         """Should optimize when enabled."""
-        config = ToolkitConfig(optimize_memory=True)
+        config = ToolkitConfig(optimise_memory=True)
         result_df, result = optimise_memory(sample_df, config=config)
         assert result.savings_bytes >= 0

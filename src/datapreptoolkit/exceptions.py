@@ -37,6 +37,7 @@ class DataPrepError(Exception):
 # Loading errors
 # ---------------------------------------------------------------------------
 
+
 class LoadError(DataPrepError):
     """Raised when a dataset cannot be loaded from disk or memory."""
 
@@ -67,6 +68,7 @@ class EmptyDatasetError(LoadError):
 # Cleaning errors
 # ---------------------------------------------------------------------------
 
+
 class CleaningError(DataPrepError):
     """Raised when a data-cleaning operation fails."""
 
@@ -82,9 +84,7 @@ class InvalidColumnError(CleaningError):
             close = [c for c in self.available if c.lower() == column.lower()]
             if close:
                 hint = f"  Did you mean '{close[0]}'?"
-        super().__init__(
-            f"Column '{column}' not found in DataFrame.{hint}"
-        )
+        super().__init__(f"Column '{column}' not found in DataFrame.{hint}")
 
 
 class IncompatibleDataError(CleaningError):
@@ -94,6 +94,7 @@ class IncompatibleDataError(CleaningError):
 # ---------------------------------------------------------------------------
 # Validation errors
 # ---------------------------------------------------------------------------
+
 
 class ValidationError(DataPrepError):
     """Raised when data validation checks fail."""
@@ -114,6 +115,7 @@ class QualityThresholdError(ValidationError):
 # Reporting errors
 # ---------------------------------------------------------------------------
 
+
 class ReportError(DataPrepError):
     """Raised when report generation fails."""
 
@@ -121,6 +123,7 @@ class ReportError(DataPrepError):
 # ---------------------------------------------------------------------------
 # Configuration errors
 # ---------------------------------------------------------------------------
+
 
 class ConfigError(DataPrepError):
     """Raised when an invalid configuration is provided."""

@@ -42,11 +42,13 @@ def sample_df() -> pd.DataFrame:
 @pytest.fixture
 def minimal_df() -> pd.DataFrame:
     """Create a minimal clean DataFrame for basic testing."""
-    return pd.DataFrame({
-        "a": [1, 2, 3, 4, 5],
-        "b": [10.0, 20.0, 30.0, 40.0, 50.0],
-        "c": ["x", "y", "z", "x", "y"],
-    })
+    return pd.DataFrame(
+        {
+            "a": [1, 2, 3, 4, 5],
+            "b": [10.0, 20.0, 30.0, 40.0, 50.0],
+            "c": ["x", "y", "z", "x", "y"],
+        }
+    )
 
 
 @pytest.fixture
@@ -58,11 +60,13 @@ def empty_df() -> pd.DataFrame:
 @pytest.fixture
 def constant_df() -> pd.DataFrame:
     """Create a DataFrame with constant columns."""
-    return pd.DataFrame({
-        "const_col": [1] * 10,
-        "normal_col": range(10),
-        "all_null": [np.nan] * 10,
-    })
+    return pd.DataFrame(
+        {
+            "const_col": [1] * 10,
+            "normal_col": range(10),
+            "all_null": [np.nan] * 10,
+        }
+    )
 
 
 @pytest.fixture
@@ -78,11 +82,13 @@ def duplicate_df() -> pd.DataFrame:
 @pytest.fixture
 def high_cardinality_df() -> pd.DataFrame:
     """Create a DataFrame with high cardinality columns."""
-    return pd.DataFrame({
-        "id": range(100),
-        "unique_col": [f"unique_{i}" for i in range(100)],
-        "low_card": np.random.choice(["A", "B", "C"], 100),
-    })
+    return pd.DataFrame(
+        {
+            "id": range(100),
+            "unique_col": [f"unique_{i}" for i in range(100)],
+            "low_card": np.random.choice(["A", "B", "C"], 100),
+        }
+    )
 
 
 @pytest.fixture
@@ -94,10 +100,12 @@ def default_config() -> ToolkitConfig:
 @pytest.fixture
 def test_csv_path(tmp_path: Path) -> Path:
     """Create a temporary CSV file for testing."""
-    df = pd.DataFrame({
-        "col1": [1, 2, 3],
-        "col2": ["a", "b", "c"],
-    })
+    df = pd.DataFrame(
+        {
+            "col1": [1, 2, 3],
+            "col2": ["a", "b", "c"],
+        }
+    )
     path = tmp_path / "test.csv"
     df.to_csv(path, index=False)
     return path

@@ -14,7 +14,7 @@ class TestToolkitConfig:
         """Default config should have expected values."""
         assert default_config.remove_duplicates is False
         assert default_config.parse_datetimes is True
-        assert default_config.optimize_memory is True
+        assert default_config.optimise_memory is True
         assert default_config.detect_outliers is True
         assert default_config.outlier_method == "iqr"
         assert default_config.iqr_multiplier == 1.5

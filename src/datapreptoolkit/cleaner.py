@@ -38,6 +38,7 @@ logger = logging.getLogger("datapreptoolkit")
 # Dataclasses
 # ---------------------------------------------------------------------------
 
+
 @dataclass(frozen=True)
 class ImputationRecord:
     """Record of a single imputation operation.
@@ -87,19 +88,6 @@ class CleaningResult:
 # ---------------------------------------------------------------------------
 # Public API: Missing Value Handling
 # ---------------------------------------------------------------------------
-
-_STRATEGY_DISPATCH: dict[str, str] = {
-    "mean": "mean",
-    "median": "median",
-    "mode": "mode",
-    "ffill": "ffill",
-    "bfill": "bfill",
-    "interpolate": "interpolate",
-    "drop_rows": "drop_rows",
-    "drop_column": "drop_column",
-    "zero": "zero",
-    "empty": "empty",
-}
 
 
 def handle_missing_values(
@@ -241,6 +229,7 @@ def handle_missing_values(
 # Public API: Datetime Parsing
 # ---------------------------------------------------------------------------
 
+
 def parse_datetimes(
     df: pd.DataFrame,
     columns: list[str] | None = None,
@@ -290,9 +279,7 @@ def parse_datetimes(
                 result.columns_parsed.append(col)
                 result.messages.append(f"Column '{col}' parsed as datetime.")
         except (ValueError, TypeError) as exc:
-            result.messages.append(
-                f"Column '{col}': datetime parse skipped — {exc}."
-            )
+            result.messages.append(f"Column '{col}': datetime parse skipped — {exc}.")
 
     logger.info("Datetime parsing: %d columns converted", len(result.columns_parsed))
     return cleaned, result
@@ -301,6 +288,7 @@ def parse_datetimes(
 # ---------------------------------------------------------------------------
 # Public API: Duplicate Removal
 # ---------------------------------------------------------------------------
+
 
 def remove_duplicates(
     df: pd.DataFrame,
@@ -345,6 +333,7 @@ def remove_duplicates(
 # ---------------------------------------------------------------------------
 # Public API: Invalid Value Detection
 # ---------------------------------------------------------------------------
+
 
 @dataclass(frozen=True)
 class InvalidValueRule:
@@ -394,15 +383,27 @@ def detect_invalid_values(
 
     # -- Built-in: negative check --
     non_negative_hints = {
-        "price", "age", "count", "quantity", "amount", "revenue",
-        "payment_value", "freight_value", "weight", "height", "width",
-        "length", "photos_qty", "installments",
+        "price",
+        "age",
+        "count",
+        "quantity",
+        "amount",
+        "revenue",
+        "payment_value",
+        "freight_value",
+        "weight",
+        "height",
+        "width",
+        "length",
+        "photos_qty",
+        "installments",
     }
     if check_negative_non_negative:
         for col in df.columns:
             col_lower = col.lower()
-            if any(hint in col_lower for hint in non_negative_hints) \
-                    and pd.api.types.is_numeric_dtype(df[col]):
+            if any(
+                hint in col_lower for hint in non_negative_hints
+            ) and pd.api.types.is_numeric_dtype(df[col]):
                 mask = df[col] < 0
                 bad_idx = df.index[mask].tolist()
                 if bad_idx:
@@ -436,23 +437,20 @@ def detect_invalid_values(
                     )
                     result.messages.append(msg)
                     logger.warning("Custom rule violation: %s", msg)
-            except Exception as exc:
-                result.messages.append(
-                    f"Rule for '{rule.column}' failed: {exc}"
-                )
+            except (ValueError, TypeError) as exc:
+                result.messages.append(f"Rule for '{rule.column}' failed: {exc}")
 
     if not invalid_map:
         result.messages.append("No invalid values detected.")
 
-    logger.info(
-        "Invalid value detection: %d columns with issues", len(invalid_map)
-    )
+    logger.info("Invalid value detection: %d columns with issues", len(invalid_map))
     return invalid_map, result
 
 
 # ---------------------------------------------------------------------------
 # Public API: Comprehensive Clean Pipeline
 # ---------------------------------------------------------------------------
+
 
 def clean_dataset(
     df: pd.DataFrame,
@@ -482,15 +480,8 @@ def clean_dataset(
 
     # Step 1: Duplicates
     if cfg.remove_duplicates:
-        subset = (
-            list(cfg.duplicate_subset)
-            if cfg.duplicate_subset
-            else None
-        )
-        keep: str = (
-            "never" if cfg.duplicate_keep == "none"
-            else cfg.duplicate_keep
-        )
+        subset = list(cfg.duplicate_subset) if cfg.duplicate_subset else None
+        keep: str = "never" if cfg.duplicate_keep == "none" else cfg.duplicate_keep
         cleaned, dup_res = remove_duplicates(
             cleaned, subset=subset, keep=keep, config=cfg
         )

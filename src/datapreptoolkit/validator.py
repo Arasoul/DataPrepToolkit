@@ -40,6 +40,7 @@ logger = logging.getLogger("datapreptoolkit")
 # Dataclasses
 # ---------------------------------------------------------------------------
 
+
 @dataclass(frozen=True)
 class ValidationRule:
     """A single validation rule for a column.
@@ -111,6 +112,7 @@ class ValidationResult:
 # Internal validation functions
 # ---------------------------------------------------------------------------
 
+
 def _validate_range(
     df: pd.DataFrame,
     rule: ValidationRule,
@@ -159,8 +161,7 @@ def _validate_range(
         sample_violations=samples,
         description=(
             rule.description
-            or f"Values outside range "
-               f"[{rule.min_value}, {rule.max_value}]."
+            or f"Values outside range [{rule.min_value}, {rule.max_value}]."
         ),
     )
 
@@ -206,8 +207,7 @@ def _validate_regex(
         violation_pct=pct,
         sample_violations=samples,
         description=(
-            rule.description
-            or f"Values not matching pattern '{rule.pattern}'."
+            rule.description or f"Values not matching pattern '{rule.pattern}'."
         ),
     )
 
@@ -358,6 +358,7 @@ _VALIDATORS = {
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
+
 
 def validate_dataset(
     df: pd.DataFrame,

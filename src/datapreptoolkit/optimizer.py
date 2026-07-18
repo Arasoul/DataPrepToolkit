@@ -33,6 +33,7 @@ logger = logging.getLogger("datapreptoolkit")
 # Dataclasses
 # ---------------------------------------------------------------------------
 
+
 @dataclass(frozen=True)
 class ColumnOptimization:
     """Record of a single column's type change.
@@ -84,6 +85,7 @@ class OptimizationResult:
 # ---------------------------------------------------------------------------
 # Internal helpers
 # ---------------------------------------------------------------------------
+
 
 def _downcast_integer(series: pd.Series) -> pd.Series:
     """Down-cast an integer Series to the smallest feasible int dtype.
@@ -175,6 +177,7 @@ def _optimise_object_to_category(
 # Public API
 # ---------------------------------------------------------------------------
 
+
 def optimise_datatypes(
     df: pd.DataFrame,
     category_threshold: float = 0.5,
@@ -213,24 +216,24 @@ def optimise_datatypes(
                 result.column_changes.append(
                     ColumnOptimization(col, db, da, mem_col_before, mem_col_after)
                 )
-                result.messages.append(
-                    f"Column '{col}': {db} -> {da}"
-                )
-        elif pd.api.types.is_object_dtype(series) \
-                or isinstance(series.dtype, pd.StringDtype):
+                result.messages.append(f"Column '{col}': {db} -> {da}")
+        elif pd.api.types.is_object_dtype(series) or isinstance(
+            series.dtype, pd.StringDtype
+        ):
             new_series = _optimise_object_to_category(series, category_threshold)
             if str(new_series.dtype) != dtype_before:
                 cleaned[col] = new_series
                 mem_col_after = int(new_series.memory_usage(deep=True))
                 result.column_changes.append(
                     ColumnOptimization(
-                        col, dtype_before, str(new_series.dtype),
-                        mem_col_before, mem_col_after,
+                        col,
+                        dtype_before,
+                        str(new_series.dtype),
+                        mem_col_before,
+                        mem_col_after,
                     )
                 )
-                result.messages.append(
-                    f"Column '{col}': {dtype_before} -> category"
-                )
+                result.messages.append(f"Column '{col}': {dtype_before} -> category")
 
     mem_after = int(cleaned.memory_usage(deep=True).sum())
     result.memory_after = mem_after
@@ -258,7 +261,7 @@ def optimise_memory(
 ) -> tuple[pd.DataFrame, OptimizationResult]:
     """High-level memory optimisation controlled by *config*.
 
-    Runs :func:`optimise_datatypes` if ``config.optimize_memory`` is True.
+    Runs :func:`optimise_datatypes` if ``config.optimise_memory`` is True.
     Otherwise returns the original DataFrame unchanged.
 
     Args:
@@ -270,7 +273,7 @@ def optimise_memory(
     """
     cfg = config or ToolkitConfig()
 
-    if not cfg.optimize_memory:
+    if not cfg.optimise_memory:
         mem = int(df.memory_usage(deep=True).sum())
         result = OptimizationResult(
             memory_before=mem,

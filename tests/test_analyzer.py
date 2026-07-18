@@ -48,8 +48,7 @@ class TestAnalyzeMissingValues:
         """Should identify columns with missing values."""
         result = analyze_missing_values(sample_df)
         cols_with_missing = [
-            col for col, info in result.columns.items()
-            if info.has_missing
+            col for col, info in result.columns.items() if info.has_missing
         ]
         assert len(cols_with_missing) > 0
 
@@ -156,8 +155,11 @@ class TestGenerateFeatureSummaries:
             assert fs.column != ""
             assert fs.dtype != ""
             assert fs.semantic_type in [
-                "numeric", "categorical", "datetime",
-                "boolean", "other",
+                "numeric",
+                "categorical",
+                "datetime",
+                "boolean",
+                "other",
             ]
             assert 0 <= fs.null_pct <= 100
 

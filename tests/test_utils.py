@@ -76,10 +76,12 @@ class TestIdentifyColumnTypes:
 
     def test_identifies_datetime(self) -> None:
         """Should identify datetime columns (only if dtype is datetime64)."""
-        df = pd.DataFrame({
-            "date": pd.to_datetime(["2020-01-01", "2020-01-02", "2020-01-03"]),
-            "name": ["a", "b", "c"],
-        })
+        df = pd.DataFrame(
+            {
+                "date": pd.to_datetime(["2020-01-01", "2020-01-02", "2020-01-03"]),
+                "name": ["a", "b", "c"],
+            }
+        )
         result = identify_column_types(df)
         assert "date" in result["datetime"]
 

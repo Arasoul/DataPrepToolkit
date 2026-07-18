@@ -92,10 +92,12 @@ class TestRemoveDuplicates:
 
     def test_subset_duplicates(self) -> None:
         """Should detect duplicates based on subset."""
-        df = pd.DataFrame({
-            "id": [1, 1, 2],
-            "value": ["a", "b", "c"],
-        })
+        df = pd.DataFrame(
+            {
+                "id": [1, 1, 2],
+                "value": ["a", "b", "c"],
+            }
+        )
         result_df, _ = remove_duplicates(df, subset=["id"])
         assert len(result_df) == 2
 

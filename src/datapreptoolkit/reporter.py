@@ -49,6 +49,7 @@ logger = logging.getLogger("datapreptoolkit")
 # Dataclasses
 # ---------------------------------------------------------------------------
 
+
 @dataclass(frozen=True)
 class EncodingRecommendation:
     """Recommended encoding for a single categorical column.
@@ -109,6 +110,7 @@ class QualityReport:
 # Encoding recommendations
 # ---------------------------------------------------------------------------
 
+
 def generate_encoding_recommendations(
     df: pd.DataFrame,
     config: ToolkitConfig | None = None,
@@ -129,9 +131,7 @@ def generate_encoding_recommendations(
         A list of :class:`EncodingRecommendation` objects.
     """
     cfg = config or ToolkitConfig()
-    cat_cols = df.select_dtypes(
-        include=["object", "category", "string"]
-    ).columns
+    cat_cols = df.select_dtypes(include=["object", "category", "string"]).columns
     recs: list[EncodingRecommendation] = []
 
     for col in cat_cols:
@@ -178,6 +178,7 @@ def generate_encoding_recommendations(
 # ---------------------------------------------------------------------------
 # Quality score computation (configurable weights)
 # ---------------------------------------------------------------------------
+
 
 def _compute_quality_score(
     profile: DatasetProfile,
@@ -232,6 +233,7 @@ def _compute_quality_score(
 # Cleaning recommendations
 # ---------------------------------------------------------------------------
 
+
 def _build_cleaning_recommendations(
     missing: MissingValueAnalysis,
     numeric: NumericAnalysis,
@@ -270,12 +272,9 @@ def _build_cleaning_recommendations(
 
     # High cardinality
     if categorical.high_cardinality_columns:
-        cols = ", ".join(
-            f"'{c}'" for c in categorical.high_cardinality_columns
-        )
+        cols = ", ".join(f"'{c}'" for c in categorical.high_cardinality_columns)
         recs.append(
-            f"High-cardinality categoricals may need "
-            f"frequency encoding: {cols}."
+            f"High-cardinality categoricals may need frequency encoding: {cols}."
         )
 
     # Constant columns
@@ -292,6 +291,7 @@ def _build_cleaning_recommendations(
 # ---------------------------------------------------------------------------
 # Public API: generate quality report
 # ---------------------------------------------------------------------------
+
 
 def generate_quality_report(
     df: pd.DataFrame,
@@ -350,6 +350,7 @@ def generate_quality_report(
 # Public API: HTML export
 # ---------------------------------------------------------------------------
 
+
 def _html_table(headers: list[str], rows: list[list[str]]) -> str:
     """Render an HTML table from headers and rows."""
     h = "".join(f"<th>{html.escape(h)}</th>" for h in headers)
@@ -394,20 +395,22 @@ def export_html_report(
     sections.append(f"""
     <div class="card">
       <h2>Dataset Overview</h2>
-      {_html_table(
-          ["Metric", "Value"],
-          [
-              ["Rows", str(report.shape[0])],
-              ["Columns", str(report.shape[1])],
-              ["Memory", report.memory_human],
-              [
-                  "Quality Score",
-                  '<span style="color:'
-                  f'{score_colour};font-weight:bold">'
-                  f"{score}/100</span>",
-              ],
-          ],
-      )}
+      {
+        _html_table(
+            ["Metric", "Value"],
+            [
+                ["Rows", str(report.shape[0])],
+                ["Columns", str(report.shape[1])],
+                ["Memory", report.memory_human],
+                [
+                    "Quality Score",
+                    '<span style="color:'
+                    f'{score_colour};font-weight:bold">'
+                    f"{score}/100</span>",
+                ],
+            ],
+        )
+    }
     </div>""")
 
     # --- Missing values ---
@@ -428,18 +431,26 @@ def export_html_report(
     # --- Numeric analysis ---
     if report.numeric and report.numeric.columns:
         num_rows = [
-            [name, f"{s.mean:.2f}", f"{s.median:.2f}", f"{s.std:.2f}",
-             f"{s.min:.2f}", f"{s.max:.2f}", str(s.outlier_count_iqr)]
+            [
+                name,
+                f"{s.mean:.2f}",
+                f"{s.median:.2f}",
+                f"{s.std:.2f}",
+                f"{s.min:.2f}",
+                f"{s.max:.2f}",
+                str(s.outlier_count_iqr),
+            ]
             for name, s in report.numeric.columns.items()
         ]
         sections.append(f"""
     <div class="card">
       <h2>Numeric Columns</h2>
-      {_html_table(
-          ["Column", "Mean", "Median", "Std",
-           "Min", "Max", "Outliers"],
-          num_rows,
-      )}
+      {
+            _html_table(
+                ["Column", "Mean", "Median", "Std", "Min", "Max", "Outliers"],
+                num_rows,
+            )
+        }
     </div>""")
 
     # --- Categorical analysis ---
@@ -469,8 +480,12 @@ def export_html_report(
     # --- Outlier summary ---
     if report.outliers and report.outliers.columns_with_outliers:
         out_rows = [
-            [name, str(s.outlier_count), f"{s.outlier_pct:.2f}%",
-             f"[{s.lower_bound}, {s.upper_bound}]"]
+            [
+                name,
+                str(s.outlier_count),
+                f"{s.outlier_pct:.2f}%",
+                f"[{s.lower_bound}, {s.upper_bound}]",
+            ]
             for name, s in report.outliers.columns.items()
             if s.outlier_count > 0
         ]
@@ -483,8 +498,7 @@ def export_html_report(
     # --- Cleaning recommendations ---
     if report.cleaning_recommendations:
         li_items = "".join(
-            f"<li>{html.escape(r)}</li>"
-            for r in report.cleaning_recommendations
+            f"<li>{html.escape(r)}</li>" for r in report.cleaning_recommendations
         )
         sections.append(f"""
     <div class="card">
@@ -536,6 +550,7 @@ def export_html_report(
 # ---------------------------------------------------------------------------
 # Public API: CSV export
 # ---------------------------------------------------------------------------
+
 
 def export_csv_summary(
     report: QualityReport,

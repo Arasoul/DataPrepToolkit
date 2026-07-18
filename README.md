@@ -3,11 +3,11 @@
 <p align="center">
   <img src="https://img.shields.io/github/actions/workflow/status/Arasoul/DataPrepToolkit/ci.yml?branch=main" alt="Build Status">
   <img src="https://img.shields.io/badge/python-3.11+-blue.svg" alt="Python 3.11+">
-  <img src="https://img.shields.io/badge/tests-166%20passing-brightgreen.svg" alt="Tests">
-  <img src="https://img.shields.io/badge/coverage-91%25-brightgreen.svg" alt="Coverage">
+  <img src="https://img.shields.io/badge/tests-171%20passing-brightgreen.svg" alt="Tests">
+  <img src="https://img.shields.io/badge/coverage-92%25-brightgreen.svg" alt="Coverage">
   <img src="https://img.shields.io/badge/mypy-passing-blue.svg" alt="Mypy">
   <img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License: MIT">
-  <img src="https://img.shields.io/badge/version-0.1.0-orange.svg" alt="Version">
+  <img src="https://img.shields.io/badge/version-1.0.0-orange.svg" alt="Version">
 </p>
 
 <p align="center">
@@ -30,7 +30,7 @@ Many data analysis projects begin by rewriting the same preprocessing code: chec
 
 **DataPrepToolkit** was built to provide a reusable, production-quality preprocessing pipeline that standardizes data loading, validation, cleaning, optimization, and reporting.
 
-The project emphasizes **software engineering best practices** rather than exploratory analysis or machine learning. Every module is typed, documented, tested (166 unit tests), and follows SOLID principles.
+The project emphasizes **software engineering best practices** rather than exploratory analysis or machine learning. Every module is typed, documented, tested (171 unit tests), and follows SOLID principles.
 
 ## Overview
 
@@ -250,7 +250,7 @@ config = ToolkitConfig(
     parse_datetimes=True,
 
     # Memory optimization
-    optimize_memory=True,
+    optimise_memory=True,
 
     # Outlier detection
     detect_outliers=True,
@@ -295,9 +295,9 @@ DataPrepToolkit/
 │   ├── outliers.py        # IQR, Z-score outlier detection
 │   ├── validator.py       # Rule-based data validation
 │   └── reporter.py        # Quality scoring, HTML/CSV export
-├── tests/                 # 166 unit tests
+├── tests/                 # 171 unit tests
 ├── examples/
-│   └── full_workflow.py   # Complete workflow demo
+│   └── full_workflow.ipynb   # Complete workflow demo
 ├── reports/               # Generated reports
 ├── screenshots/           # Report screenshots
 ├── pyproject.toml
@@ -375,8 +375,6 @@ python -m pytest tests/ --cov=datapreptoolkit --cov-report=html
 - Python 3.11+
 - pandas >= 2.1.0
 - numpy >= 1.25.0
-- scikit-learn >= 1.3.0
-- tabulate >= 0.9.0
 
 ## Changelog
 

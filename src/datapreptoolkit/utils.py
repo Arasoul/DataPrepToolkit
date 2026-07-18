@@ -26,6 +26,7 @@ logger = logging.getLogger("datapreptoolkit")
 # Logging setup
 # ---------------------------------------------------------------------------
 
+
 def setup_logging(level: str = "INFO") -> None:
     """Configure the package-level logger.
 
@@ -48,6 +49,7 @@ def setup_logging(level: str = "INFO") -> None:
 # ---------------------------------------------------------------------------
 # DataFrame helpers
 # ---------------------------------------------------------------------------
+
 
 def copy_dataframe(df: pd.DataFrame, deep: bool = True) -> pd.DataFrame:
     """Return a copy of *df* so originals are never mutated.
@@ -97,6 +99,7 @@ def ensure_directory(path: Path) -> Path:
 # Formatting helpers
 # ---------------------------------------------------------------------------
 
+
 def format_bytes(size_bytes: float) -> str:
     """Convert a byte count into a human-readable string.
 
@@ -129,12 +132,13 @@ def memory_usage_mb(df: pd.DataFrame) -> float:
     Returns:
         Approximate memory usage in MB.
     """
-    return float(df.memory_usage(deep=True).sum() / (1024 ** 2))
+    return float(df.memory_usage(deep=True).sum() / (1024**2))
 
 
 # ---------------------------------------------------------------------------
 # Column classification helpers
 # ---------------------------------------------------------------------------
+
 
 def identify_column_types(df: pd.DataFrame) -> dict[str, list[str]]:
     """Classify columns by their semantic type.
@@ -185,7 +189,8 @@ def find_datetime_columns(
         A list of column names that were successfully parsed as datetimes.
     """
     search = candidates or [
-        c for c in df.columns
+        c
+        for c in df.columns
         if pd.api.types.is_object_dtype(df[c])
         or isinstance(df[c].dtype, pd.StringDtype)
     ]
@@ -194,11 +199,8 @@ def find_datetime_columns(
         try:
             pd.to_datetime(df[col], errors="coerce")
             # If >50% became NaT, it's probably not a datetime column
-            nat_ratio = (
-                pd.to_datetime(df[col], errors="coerce")
-                .isnull()
-                .sum()
-                / len(df[col])
+            nat_ratio = pd.to_datetime(df[col], errors="coerce").isnull().sum() / len(
+                df[col]
             )
             if nat_ratio > 0.5:
                 continue
