@@ -1,4 +1,4 @@
-"""Analytical functions for missing values, numeric/categorical columns,
+﻿"""Analytical functions for missing values, numeric/categorical columns,
 and feature summaries.
 
 Every function in this module is **read-only** — the input DataFrame is
@@ -7,7 +7,7 @@ can use them programmatically or pass them to the reporter.
 
 Example::
 
-    from datapreptoolkit.analyzer import (
+    from datapreptoolkit._internal.analyzer import (
         analyze_missing_values,
         analyze_numeric_columns,
     )
@@ -24,7 +24,7 @@ from typing import Any
 
 import pandas as pd
 
-from datapreptoolkit.config import ToolkitConfig
+from datapreptoolkit._internal.config import ToolkitConfig
 
 logger = logging.getLogger("datapreptoolkit")
 

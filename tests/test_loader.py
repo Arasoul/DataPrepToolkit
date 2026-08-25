@@ -15,7 +15,7 @@ from datapreptoolkit import (
     load_dataframe,
     profile_dataset,
 )
-from datapreptoolkit.exceptions import FileFormatError, LoadError
+from datapreptoolkit._internal.exceptions import FileFormatError, LoadError
 
 
 class TestLoadCSV:

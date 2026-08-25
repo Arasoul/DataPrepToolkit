@@ -1,4 +1,4 @@
-"""Custom exception hierarchy for DataPrepToolkit.
+﻿"""Custom exception hierarchy for DataPrepToolkit.
 
 All toolkit-specific exceptions inherit from :class:`DataPrepError`,
 making it easy for callers to catch every toolkit error with a single
@@ -6,7 +6,7 @@ making it easy for callers to catch every toolkit error with a single
 
 Example::
 
-    from datapreptoolkit.exceptions import DataPrepError, LoadError
+    from datapreptoolkit._internal.exceptions import DataPrepError, LoadError
 
     try:
         toolkit.load("missing.csv")

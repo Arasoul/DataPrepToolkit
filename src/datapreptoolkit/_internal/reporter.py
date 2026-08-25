@@ -1,4 +1,4 @@
-"""Data quality reporting: encoding recommendations, quality scoring,
+﻿"""Data quality reporting: encoding recommendations, quality scoring,
 HTML and CSV export.
 
 Assembles every analysis module into a single :class:`QualityReport`
@@ -7,7 +7,7 @@ a CSV summary.
 
 Example::
 
-    from datapreptoolkit.reporter import (
+    from datapreptoolkit._internal.reporter import (
         generate_quality_report,
         export_html_report,
     )
@@ -26,7 +26,7 @@ from typing import Any
 
 import pandas as pd
 
-from datapreptoolkit.analyzer import (
+from datapreptoolkit._internal.analyzer import (
     CategoricalAnalysis,
     FeatureSummary,
     MissingValueAnalysis,
@@ -36,11 +36,11 @@ from datapreptoolkit.analyzer import (
     analyze_numeric_columns,
     generate_feature_summaries,
 )
-from datapreptoolkit.config import EncodingStrategy, ToolkitConfig
-from datapreptoolkit.exceptions import ReportError
-from datapreptoolkit.loader import DatasetProfile, profile_dataset
-from datapreptoolkit.outliers import OutlierDetection, detect_outliers
-from datapreptoolkit.utils import ensure_directory
+from datapreptoolkit._internal.config import EncodingStrategy, ToolkitConfig
+from datapreptoolkit._internal.exceptions import ReportError
+from datapreptoolkit._internal.loader import DatasetProfile, profile_dataset
+from datapreptoolkit._internal.outliers import OutlierDetection, detect_outliers
+from datapreptoolkit._internal.utils import ensure_directory
 
 logger = logging.getLogger("datapreptoolkit")
 

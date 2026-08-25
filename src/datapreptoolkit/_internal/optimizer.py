@@ -1,4 +1,4 @@
-"""Datatype and memory optimisation.
+﻿"""Datatype and memory optimisation.
 
 Provides functions that down-cast numeric types and convert low-cardinality
 object columns to ``category`` dtype, reducing the DataFrame's memory
@@ -9,7 +9,7 @@ so callers can inspect exactly what changed.
 
 Example::
 
-    from datapreptoolkit.optimizer import optimise_memory
+    from datapreptoolkit._internal.optimizer import optimise_memory
 
     optimised, result = optimise_memory(df)
     print(result.savings_human)
@@ -23,8 +23,8 @@ from dataclasses import dataclass, field
 import numpy as np
 import pandas as pd
 
-from datapreptoolkit.config import ToolkitConfig
-from datapreptoolkit.utils import copy_dataframe, format_bytes
+from datapreptoolkit._internal.config import ToolkitConfig
+from datapreptoolkit._internal.utils import copy_dataframe, format_bytes
 
 logger = logging.getLogger("datapreptoolkit")
 

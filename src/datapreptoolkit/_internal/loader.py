@@ -7,7 +7,7 @@ column roles (IDs, targets, leakage).
 
 Example::
 
-    from datapreptoolkit.loader import load_csv, profile_dataset
+    from datapreptoolkit._internal.loader import load_csv, profile_dataset
 
     df = load_csv("data/sales.csv")
     profile = profile_dataset(df)
@@ -23,13 +23,13 @@ from typing import Any
 
 import pandas as pd
 
-from datapreptoolkit.config import ToolkitConfig
-from datapreptoolkit.exceptions import (
+from datapreptoolkit._internal.config import ToolkitConfig
+from datapreptoolkit._internal.exceptions import (
     EmptyDatasetError,
     FileFormatError,
     LoadError,
 )
-from datapreptoolkit.utils import (
+from datapreptoolkit._internal.utils import (
     copy_dataframe,
     format_bytes,
 )
@@ -277,7 +277,18 @@ def profile_dataset(
         unique_ratio = unique / n_rows if n_rows > 0 else 0.0
         null_pct = (null_count / n_rows * 100) if n_rows > 0 else 0.0
 
-        is_constant = unique_ratio <= (1.0 - cfg.constant_threshold)
+        # A column is constant when its single most-common value covers at
+        # least `constant_threshold` of the non-null population, OR when it
+        # has only one unique value.  The old formula
+        # ``unique_ratio <= (1 - threshold)`` was mathematically inverted for
+        # small DataFrames (e.g. 1/50 = 0.02 > 0.01 for threshold=0.99).
+        if unique <= 1:
+            is_constant = True
+        elif non_null > 0:
+            mode_freq = int(series.dropna().value_counts().iloc[0])
+            is_constant = (mode_freq / non_null) >= cfg.constant_threshold
+        else:
+            is_constant = False
         is_high_card = unique_ratio >= cfg.high_cardinality_threshold and unique > 1
         is_potential_id = unique_ratio >= cfg.id_column_threshold and unique > 1
 

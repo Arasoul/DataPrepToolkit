@@ -6,7 +6,7 @@ so callers can inspect exactly what changed.  The original is never mutated.
 
 Example::
 
-    from datapreptoolkit.cleaner import (
+    from datapreptoolkit._internal.cleaner import (
         handle_missing_values,
         remove_duplicates,
     )
@@ -24,9 +24,9 @@ from typing import Any
 
 import pandas as pd
 
-from datapreptoolkit.config import ToolkitConfig
-from datapreptoolkit.exceptions import CleaningError
-from datapreptoolkit.utils import (
+from datapreptoolkit._internal.config import ToolkitConfig
+from datapreptoolkit._internal.exceptions import CleaningError
+from datapreptoolkit._internal.utils import (
     copy_dataframe,
     find_datetime_columns,
 )
@@ -184,10 +184,24 @@ def handle_missing_values(
                 f"Dropped {null_count} rows due to nulls in '{col}'."
             )
         elif strat == "drop_column":
-            cleaned = cleaned.drop(columns=[col])
-            result.columns_dropped.append(col)
-            result.messages.append(f"Dropped column '{col}' (>60% null).")
-            continue  # skip imputation record
+            null_count_col = cleaned[col].isnull().sum()
+            null_ratio = null_count_col / len(cleaned) if len(cleaned) > 0 else 0.0
+            if null_ratio > drop_threshold:
+                cleaned = cleaned.drop(columns=[col])
+                result.columns_dropped.append(col)
+                msg = (
+                    f"Dropped column '{col}' ({null_ratio:.0%} null > "
+                    f"{drop_threshold:.0%} threshold)."
+                )
+                result.messages.append(msg)
+                continue  # skip imputation record
+            else:
+                # Below threshold: impute with mode as a safe fallback
+                strat = "mode"
+                mode_series = cleaned[col].mode()
+                if not mode_series.empty:
+                    fill_val = mode_series.iloc[0]
+                    cleaned[col] = cleaned[col].fillna(fill_val)
         elif strat == "zero":
             if pd.api.types.is_numeric_dtype(cleaned[col]):
                 fill_val = 0
@@ -269,7 +283,11 @@ def parse_datetimes(
                 errors="coerce",
             )
             # If the conversion turned >50 % of values into NaT, revert
-            nat_ratio = cleaned[col].isnull().sum() / len(cleaned)
+            nat_ratio = (
+                cleaned[col].isnull().sum() / len(cleaned)
+                if len(cleaned) > 0
+                else 0.0
+            )
             if nat_ratio > 0.5:
                 cleaned[col] = df[col]
                 result.messages.append(

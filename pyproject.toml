@@ -1,10 +1,10 @@
 [build-system]
-requires = ["setuptools>=68.0", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
 name = "datapreptoolkit"
-version = "1.0.0"
+dynamic = ["version"]
 description = "A reusable Python toolkit for automated data preprocessing, profiling, and quality reporting before exploratory analysis, business intelligence reporting, or machine learning workflows."
 readme = "README.md"
 license = {text = "MIT"}
@@ -26,16 +26,23 @@ classifiers = [
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Topic :: Scientific/Engineering :: Information Analysis",
+    "Typing :: Typed",
 ]
 dependencies = [
     "pandas>=2.1.0",
     "numpy>=1.25.0",
+    "automation-core>=0.1.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/Arasoul/DataPrepToolkit"
+Repository = "https://github.com/Arasoul/DataPrepToolkit"
+Issues = "https://github.com/Arasoul/DataPrepToolkit/issues"
 
 [project.optional-dependencies]
 dev = [
@@ -46,8 +53,11 @@ dev = [
     "pandas-stubs>=2.1.0",
 ]
 
-[tool.setuptools.packages.find]
-where = ["src"]
+[tool.hatch.version]
+path = "src/datapreptoolkit/_version.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/datapreptoolkit"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

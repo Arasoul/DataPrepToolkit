@@ -6,7 +6,7 @@ indices, bounds, and counts programmatically.
 
 Example::
 
-    from datapreptoolkit.outliers import detect_outliers
+    from datapreptoolkit._internal.outliers import detect_outliers
 
     result = detect_outliers(df, method="iqr")
     print(result.total_outliers)
@@ -20,7 +20,7 @@ from dataclasses import dataclass, field
 import numpy as np
 import pandas as pd
 
-from datapreptoolkit.config import ToolkitConfig, ZScoreMethod
+from datapreptoolkit._internal.config import ToolkitConfig, ZScoreMethod
 
 logger = logging.getLogger("datapreptoolkit")
 
@@ -117,13 +117,21 @@ def detect_outliers_iqr(
         if series.empty:
             continue
 
-        q1 = float(series.quantile(0.25))
-        q3 = float(series.quantile(0.75))
+        # Separate finite from infinite values.  Infinities are always outliers;
+        # IQR bounds are computed from finite values only so that inf/−inf in the
+        # data does not push the bounds to (−inf, +inf).
+        finite = series[np.isfinite(series)]
+        if finite.empty:
+            continue
+
+        q1 = float(finite.quantile(0.25))
+        q3 = float(finite.quantile(0.75))
         iqr = q3 - q1
         lower = q1 - m * iqr
         upper = q3 + m * iqr
 
-        mask = (series < lower) | (series > upper)
+        # A value is an outlier if it is infinite OR falls outside [lower, upper]
+        mask = (series < lower) | (series > upper) | (~np.isfinite(series))
         outlier_idx = tuple(series.index[mask].tolist())
         n_out = len(outlier_idx)
         pct = round(n_out / len(series) * 100, 2) if len(series) else 0.0
@@ -212,28 +220,38 @@ def detect_outliers_zscore(
         if series.empty:
             continue
 
+        # Compute z-scores on finite values; infinities are always outliers.
+        finite = series[np.isfinite(series)]
+        if finite.empty:
+            continue
+
         if m == ZScoreMethod.MODIFIED:
-            med = float(series.median())
-            mad = float(np.median(np.abs(series - med)))
+            med = float(finite.median())
+            mad = float(np.median(np.abs(finite - med)))
             if mad == 0:
-                z_scores = pd.Series(0.0, index=series.index)
+                z_scores = pd.Series(0.0, index=finite.index)
             else:
-                z_scores = 0.6745 * (series - med) / mad
+                z_scores = 0.6745 * (finite - med) / mad
         else:
-            mean = float(series.mean())
-            std = float(series.std())
+            mean = float(finite.mean())
+            std = float(finite.std())
             if std == 0:
-                z_scores = pd.Series(0.0, index=series.index)
+                z_scores = pd.Series(0.0, index=finite.index)
             else:
-                z_scores = (series - mean) / std
+                z_scores = (finite - mean) / std
 
         abs_z = z_scores.abs()
-        mask = abs_z > t
+        # Finite-based mask plus any inf/-inf in the original non-null series
+        finite_mask = abs_z > t
+        inf_mask = ~np.isfinite(series)
+        mask = pd.Series(False, index=series.index)
+        mask.loc[finite_mask.index[finite_mask]] = True
+        mask.loc[inf_mask.index[inf_mask]] = True
         outlier_idx = tuple(series.index[mask].tolist())
         n_out = len(outlier_idx)
         pct = round(n_out / len(series) * 100, 2) if len(series) else 0.0
 
-        # Bounds in original value space
+        # Bounds in original value space (computed from finite values)
         if m == ZScoreMethod.MODIFIED:
             if mad != 0:
                 lower = med - (t / 0.6745) * mad
@@ -241,8 +259,8 @@ def detect_outliers_zscore(
             else:
                 lower = upper = med
         else:
-            mean_v = float(series.mean())
-            std_v = float(series.std())
+            mean_v = float(finite.mean())
+            std_v = float(finite.std()) if len(finite) > 1 else 0.0
             lower = mean_v - t * std_v
             upper = mean_v + t * std_v
 

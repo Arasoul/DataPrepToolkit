@@ -1,4 +1,4 @@
-"""Configuration module for DataPrepToolkit.
+﻿"""Configuration module for DataPrepToolkit.
 
 Provides a centralised, immutable configuration object that controls
 every configurable behaviour in the toolkit.

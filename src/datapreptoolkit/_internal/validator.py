@@ -1,4 +1,4 @@
-"""Data validation module for checking data quality rules.
+﻿"""Data validation module for checking data quality rules.
 
 Provides functions and dataclasses for validating DataFrames against
 custom rules such as value ranges, regex patterns, required columns,
@@ -6,7 +6,7 @@ and duplicate primary keys.
 
 Example::
 
-    from datapreptoolkit.validator import validate_dataset, ValidationRule
+    from datapreptoolkit._internal.validator import validate_dataset, ValidationRule
 
     rules = [
         ValidationRule(
@@ -31,7 +31,7 @@ from typing import Any
 
 import pandas as pd
 
-from datapreptoolkit.config import ToolkitConfig
+from datapreptoolkit._internal.config import ToolkitConfig
 
 logger = logging.getLogger("datapreptoolkit")
 

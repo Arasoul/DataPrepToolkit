@@ -5,6 +5,25 @@ All notable changes to DataPrepToolkit will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-08-25
+
+Dynamic behavior audit, bug fixes, and ecosystem integration release.
+
+### Added
+
+- **Dynamic Behavior Verification**: Comprehensive test suite (`test_dynamic_datasets.py`) covering 20 dataset archetypes (Datasets A–T) and edge cases.
+- **Contract Adapter**: `contracts.py` adapter for `automation-core` integration.
+- **Audit Documentation**: Complete `AUDIT_REPORT.md` documenting dynamic dataset behavior, AI independence, and ecosystem compatibility.
+
+### Fixed
+
+- **Loader**: Corrected `is_constant` column detection logic for small DataFrames (`unique_count <= 1` or top mode frequency $\ge$ threshold).
+- **Cleaner**: Enforced `drop_threshold` guard in `handle_missing_values` when using `strategy="drop_column"`.
+- **Cleaner**: Added zero-length guard in `parse_datetimes` to prevent division-by-zero `RuntimeWarning` on empty DataFrames.
+- **Outliers**: Isolated finite values in IQR and Z-score calculations to prevent infinite values (`inf`/`-inf`) from corrupting detection bounds.
+- **Utils**: Suppressed dateutil fallback `UserWarning` during automatic datetime column inference.
+- **Typing**: Added strict parameter annotations in `contracts.py` for MyPy compliance.
+
 ## [1.0.0] - 2026-07-19
 
 First stable release of DataPrepToolkit.

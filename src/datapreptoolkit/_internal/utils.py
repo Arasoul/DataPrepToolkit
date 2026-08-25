@@ -1,25 +1,30 @@
-"""Shared utility helpers for DataPrepToolkit.
+"""Internal utils — delegates shared functions to automation_core.
 
-Every function here is **stateless** and **pure** — they take inputs,
-return outputs, and have no side effects beyond optional logging.
-Other modules import from here to stay DRY.
+DPT-specific helpers are defined locally.
 """
 
 from __future__ import annotations
 
 import logging
 import sys
+import warnings
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 import pandas as pd
-
-from datapreptoolkit.exceptions import InvalidColumnError
-
-if TYPE_CHECKING:
-    pass
+from automation_core.utils import format_bytes, identify_column_types
 
 logger = logging.getLogger("datapreptoolkit")
+
+__all__ = [
+    "identify_column_types",
+    "format_bytes",
+    "setup_logging",
+    "copy_dataframe",
+    "validate_columns",
+    "ensure_directory",
+    "memory_usage_mb",
+    "find_datetime_columns",
+]
 
 
 # ---------------------------------------------------------------------------
@@ -75,6 +80,8 @@ def validate_columns(df: pd.DataFrame, columns: list[str]) -> None:
     Raises:
         InvalidColumnError: If any of the requested columns are absent.
     """
+    from datapreptoolkit._internal.exceptions import InvalidColumnError
+
     missing = [c for c in columns if c not in df.columns]
     if missing:
         logger.error("Missing columns: %s", missing)
@@ -95,34 +102,6 @@ def ensure_directory(path: Path) -> Path:
     return path
 
 
-# ---------------------------------------------------------------------------
-# Formatting helpers
-# ---------------------------------------------------------------------------
-
-
-def format_bytes(size_bytes: float) -> str:
-    """Convert a byte count into a human-readable string.
-
-    Examples::
-
-        >>> format_bytes(1536)
-        '1.50 KB'
-        >>> format_bytes(2_097_152)
-        '2.00 MB'
-
-    Args:
-        size_bytes: Number of bytes.
-
-    Returns:
-        A formatted string such as ``"1.50 KB"``.
-    """
-    for unit in ("B", "KB", "MB", "GB", "TB"):
-        if abs(size_bytes) < 1024:
-            return f"{size_bytes:.2f} {unit}"
-        size_bytes /= 1024  # type: ignore[assignment]
-    return f"{size_bytes:.2f} PB"
-
-
 def memory_usage_mb(df: pd.DataFrame) -> float:
     """Return the total memory usage of *df* in megabytes.
 
@@ -133,45 +112,6 @@ def memory_usage_mb(df: pd.DataFrame) -> float:
         Approximate memory usage in MB.
     """
     return float(df.memory_usage(deep=True).sum() / (1024**2))
-
-
-# ---------------------------------------------------------------------------
-# Column classification helpers
-# ---------------------------------------------------------------------------
-
-
-def identify_column_types(df: pd.DataFrame) -> dict[str, list[str]]:
-    """Classify columns by their semantic type.
-
-    Args:
-        df: The DataFrame to classify.
-
-    Returns:
-        A dict with keys ``"numeric"``, ``"categorical"``, ``"datetime"``,
-        ``"boolean"``, and ``"other"``, each mapping to a list of column names.
-    """
-    result: dict[str, list[str]] = {
-        "numeric": [],
-        "categorical": [],
-        "datetime": [],
-        "boolean": [],
-        "other": [],
-    }
-    for col in df.columns:
-        dtype = df[col].dtype
-        if pd.api.types.is_bool_dtype(dtype):
-            result["boolean"].append(col)
-        elif pd.api.types.is_numeric_dtype(dtype):
-            result["numeric"].append(col)
-        elif pd.api.types.is_datetime64_any_dtype(dtype):
-            result["datetime"].append(col)
-        elif pd.api.types.is_object_dtype(dtype) or isinstance(
-            dtype, (pd.CategoricalDtype, pd.StringDtype)
-        ):
-            result["categorical"].append(col)
-        else:
-            result["other"].append(col)
-    return result
 
 
 def find_datetime_columns(
@@ -197,10 +137,13 @@ def find_datetime_columns(
     parsed: list[str] = []
     for col in search:
         try:
-            pd.to_datetime(df[col], errors="coerce")
-            # If >50% became NaT, it's probably not a datetime column
-            nat_ratio = pd.to_datetime(df[col], errors="coerce").isnull().sum() / len(
-                df[col]
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", category=UserWarning)
+                parsed_s = pd.to_datetime(df[col], errors="coerce")
+            nat_ratio = (
+                parsed_s.isnull().sum() / len(df[col])
+                if len(df[col]) > 0
+                else 0.0
             )
             if nat_ratio > 0.5:
                 continue

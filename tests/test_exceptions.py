@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datapreptoolkit.exceptions import (
+from datapreptoolkit._internal.exceptions import (
     CleaningError,
     ConfigError,
     DataPrepError,

@@ -6,15 +6,17 @@ import pandas as pd
 import pytest
 
 from datapreptoolkit import (
-    copy_dataframe,
     format_bytes,
     identify_column_types,
+)
+from datapreptoolkit._internal.exceptions import InvalidColumnError
+from datapreptoolkit._internal.utils import (
+    copy_dataframe,
+    ensure_directory,
     memory_usage_mb,
     setup_logging,
     validate_columns,
 )
-from datapreptoolkit.exceptions import InvalidColumnError
-from datapreptoolkit.utils import ensure_directory
 
 
 class TestCopyDataframe:
